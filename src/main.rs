@@ -25,22 +25,28 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
 
     for glyph in glyphs.into_iter() {
         match glyph {
+            // Addition.
             "+" => {
                 let val = binop(&mut stack, |x, y| x + y);
                 stack.push(val);
             },
+            // Subtraction.
             "-" => {
                 let val = binop(&mut stack, |x, y| x - y);
                 stack.push(val);
             }
+            // Multiplication.
             "*" => {
                 let val = binop(&mut stack, |x, y| x * y);
                 stack.push(val);
             },
+            // Division.
             "/" => {
                 let val = binop(&mut stack, |x, y| x / y);
                 stack.push(val);
             },
+
+            // Exponentation.
             "^" => {
                 let val = binop(&mut stack, |x, y| {
                     let exp = y as u64;
@@ -56,6 +62,14 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
                 });
                 stack.push(val);
             },
+
+            // Absolute value.
+            "abs" => {
+                let val = unop(&mut stack, |x| x.abs());
+                stack.push(val);
+            },
+
+            // It's a number, so parse it and add it to the stack.
             n   => match n.parse::<f64>() {
                 Ok(n) => stack.push(n),
                 Err(_) => panic!("Invalid glyph: {}", n),
