@@ -1,6 +1,7 @@
 //! Simple Reverse Polish Notation calculator.
 
 use std::env;
+use std::iter::FromIterator;
 
 /// A LIFO stack of f64's.
 type Stack = Vec<f64>;
@@ -88,14 +89,14 @@ fn rpn(glyphs: Vec<String>) -> f64 {
     if stack.len() == 0 {
         panic!("Error: no values were given.");
     } else if stack.len() > 1 {
-        println!("Warning: values left on the stack");
+        println!("Warning: too many values on the stack");
     }
 
-    stack[0]
+    stack[stack.len() - 1]
 }
 
 fn main() {
     let glyphs: Vec<String> = env::args().skip(1).collect();
     let result = rpn(glyphs);
-    println!("Result: {}", result);
+    println!("{}", result);
 }
