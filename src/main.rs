@@ -31,31 +31,22 @@ fn rpn(glyphs: Vec<String>) -> f64 {
     let mut stack: Stack = Vec::new();
 
     for glyph in glyphs.into_iter() {
-        match glyph.as_str() {
+        let val = match glyph.as_str() {
             // Addition.
-            "+" => {
-                let val = binop(&mut stack, |x, y| x + y);
-                stack.push(val);
-            },
+            "+"         => binop(&mut stack, |x, y| x + y),
             // Subtraction.
-            "-" => {
-                let val = binop(&mut stack, |x, y| x - y);
-                stack.push(val);
-            }
+            "-"         => binop(&mut stack, |x, y| x - y),
             // Multiplication.
-            "*" | "x" => {
-                let val = binop(&mut stack, |x, y| x * y);
-                stack.push(val);
-            },
+            "*" | "x"   => binop(&mut stack, |x, y| x * y),
             // Division.
-            "/" => {
-                let val = binop(&mut stack, |x, y| x / y);
-                stack.push(val);
-            },
+            "/"         => binop(&mut stack, |x, y| x / y),
+
+            // Absolute value.
+            "abs"       => unop(&mut stack, |x| x.abs()),
 
             // Exponentation.
             "^" => {
-                let val = binop(&mut stack, |x, y| {
+                binop(&mut stack, |x, y| {
                     let exp = y as u64;
                     if exp < 2 {
                         panic!("Exponents < 2 are not supported.");
@@ -66,22 +57,17 @@ fn rpn(glyphs: Vec<String>) -> f64 {
                         pow *= x;
                     }
                     pow 
-                });
-                stack.push(val);
-            },
-
-            // Absolute value.
-            "abs" => {
-                let val = unop(&mut stack, |x| x.abs());
-                stack.push(val);
+                })
             },
 
             // It's a number, so parse it and add it to the stack.
-            n   => match n.parse::<f64>() {
-                Ok(n) => stack.push(n),
+            n => match n.parse::<f64>() {
+                Ok(n) => n,
                 Err(_) => panic!("Invalid glyph: {}", n),
             },
-        }
+        };
+
+        stack.push(val);
     }
 
     if stack.len() == 0 {
