@@ -1,5 +1,11 @@
+//! Simple Reverse Polish Notation calculator.
+
+use std::env;
+
+/// A LIFO stack of f64's.
 type Stack = Vec<f64>;
 
+/// Apply a binary operation to the stack.
 fn binop<F>(stack: &mut Stack, f: F) -> f64
     where F: Fn(f64, f64) -> f64 {
 
@@ -10,6 +16,7 @@ fn binop<F>(stack: &mut Stack, f: F) -> f64
     }
 }
 
+/// Apply a unary operation to the stack.
 fn unop<F>(stack: &mut Stack, f: F) -> f64
     where F: Fn(f64) -> f64 {
 
@@ -20,11 +27,12 @@ fn unop<F>(stack: &mut Stack, f: F) -> f64
     }
 }
 
-fn rpn(glyphs: Vec<&str>) -> f64 {
+/// Calculate an arithmetic problem in Reverse Polish Notation.
+fn rpn(glyphs: Vec<String>) -> f64 {
     let mut stack: Stack = Vec::new();
 
     for glyph in glyphs.into_iter() {
-        match glyph {
+        match glyph.as_str() {
             // Addition.
             "+" => {
                 let val = binop(&mut stack, |x, y| x + y);
@@ -36,7 +44,7 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
                 stack.push(val);
             }
             // Multiplication.
-            "*" => {
+            "*" | "x" => {
                 let val = binop(&mut stack, |x, y| x * y);
                 stack.push(val);
             },
@@ -77,10 +85,17 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
         }
     }
 
+    if stack.len() == 0 {
+        panic!("Error: no values were given.");
+    } else if stack.len() > 1 {
+        println!("Warning: values left on the stack");
+    }
+
     stack[0]
 }
 
 fn main() {
-    let result = rpn(vec!["5", "3", "+", "3.5", "*", "56", "/", "3", "^", "-1", "*", "abs"]);
+    let glyphs: Vec<String> = env::args().skip(1).collect();
+    let result = rpn(glyphs);
     println!("Result: {}", result);
 }
