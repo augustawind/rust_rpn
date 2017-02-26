@@ -1,7 +1,5 @@
 //! Simple Reverse Polish Notation calculator.
-
 use std::env;
-use std::iter::FromIterator;
 
 /// A LIFO stack of f64's.
 type Stack = Vec<f64>;
