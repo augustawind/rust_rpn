@@ -10,6 +10,16 @@ fn binop<F>(stack: &mut Stack, f: F) -> f64
     }
 }
 
+fn unop<F>(stack: &mut Stack, f: F) -> f64
+    where F: Fn(f64) -> f64 {
+
+    if let Some(x) = stack.pop() {
+        f(x)
+    } else {
+        panic!("Not enough values on the stack.")
+    }
+}
+
 fn rpn(glyphs: Vec<&str>) -> f64 {
     let mut stack: Stack = Vec::new();
 
@@ -31,6 +41,21 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
                 let val = binop(&mut stack, |x, y| x / y);
                 stack.push(val);
             },
+            "^" => {
+                let val = binop(&mut stack, |x, y| {
+                    let exp = y as u64;
+                    if exp < 2 {
+                        panic!("Exponents < 2 are not supported.");
+                    }
+
+                    let mut pow = x;
+                    for _ in 1..exp {
+                        pow *= x;
+                    }
+                    pow 
+                });
+                stack.push(val);
+            },
             n   => match n.parse::<f64>() {
                 Ok(n) => stack.push(n),
                 Err(_) => panic!("Invalid glyph: {}", n),
@@ -42,6 +67,6 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
 }
 
 fn main() {
-    let result = rpn(vec!["5", "3", "+", "3.5", "-", "2", "*", "27", "/"]);
+    let result = rpn(vec!["5", "3", "+", "3.5", "*", "56", "/", "3", "^"]);
     println!("Result: {}", result);
 }
