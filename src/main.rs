@@ -23,6 +23,14 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
                 let val = binop(&mut stack, |x, y| x - y);
                 stack.push(val);
             }
+            "*" => {
+                let val = binop(&mut stack, |x, y| x * y);
+                stack.push(val);
+            },
+            "/" => {
+                let val = binop(&mut stack, |x, y| x / y);
+                stack.push(val);
+            },
             n   => match n.parse::<f64>() {
                 Ok(n) => stack.push(n),
                 Err(_) => panic!("Invalid glyph: {}", n),
@@ -34,6 +42,6 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
 }
 
 fn main() {
-    let result = rpn(vec!["5", "3", "+"]);
+    let result = rpn(vec!["5", "3", "+", "3.5", "-", "2", "*", "27", "/"]);
     println!("Result: {}", result);
 }
