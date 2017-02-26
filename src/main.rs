@@ -81,6 +81,6 @@ fn rpn(glyphs: Vec<&str>) -> f64 {
 }
 
 fn main() {
-    let result = rpn(vec!["5", "3", "+", "3.5", "*", "56", "/", "3", "^"]);
+    let result = rpn(vec!["5", "3", "+", "3.5", "*", "56", "/", "3", "^", "-1", "*", "abs"]);
     println!("Result: {}", result);
 }
